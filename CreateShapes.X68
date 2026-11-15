@@ -14,15 +14,18 @@ START:                  ; first instruction of program
     trap    #15             ; Execute simulator task
     
     *   2. Draw pixel at X=100, Y=150
-    
-    *   2. input coordinates
+    clr.l     d1
+    clr.l     d2    
+    *   2. convert coordinates
     move.w  #100,d1         ; X coordinate
     lsl.w   #8,d1           ; Y coordinate
     addi.w  #150,d1
-    *   2. output coordinates     
+    *   2. convert back coordinates     
     move.b  d1,d2
-    sub.w   d2,d1
-    move.w  #100,d1
+    andi.w  #$00FF,d1
+    
+    
+    * move.w  #100,d1
     * move.w  #50,d2
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
