@@ -13,22 +13,29 @@ START:                  ; first instruction of program
     move.b  #80,d0          ; Task 80: Set pen color
     trap    #15             ; Execute simulator task
     
-    *   2. Draw pixel at X=100, Y=150
-    clr.l     d1
-    clr.l     d2    
+    *   2. Draw pixel at X=100, Y=150 
     *   2. convert coordinates
-    move.w  #100,d1         ; X coordinate
-    lsl.w   #8,d1           ; Y coordinate
+    move.w  #100,d1         ; X Start coordinate
+    lsl.w   #8,d1           ; Y Start coordinate
     addi.w  #150,d1
-    *   2. convert back coordinates     
+    
+    move.w  #150,d3         ; X End coordinate
+    lsl.w   #8,d3           ; Y End coordinate
+    addi.w  #200,d3    
+    *   2. convert back coordinates
+    move.b  d3,d4
+    andi.w  #$00FF,d3
+     
     move.b  d1,d2
     andi.w  #$00FF,d1
-    
-    
-    * move.w  #100,d1
-    * move.w  #50,d2
+
+loopV:
+    addq.w  #1,d1
+    addq.w  #1,d3
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
+    cmp     d3,d1
+    blo     loopV
 
 
     SIMHALT             ; halt simulator
