@@ -8,40 +8,65 @@
 START:                  ; first instruction of program
 
 * Put program code here
-    *   1. Set pen color to Red ($00BBGGRR -> $000000FF)
-    move.l  #$000000FF,d1   ; Load color value into D1
+    ; set defaults
+    move.l  #$00FF00FF,d1   ; default purple
+    jsr     _MAIN
+    
+_SET_COLOR:                 ; $00BBGGRR
     move.b  #80,d0          ; Task 80: Set pen color
     trap    #15             ; Execute simulator task
-    
-    *   2. Draw pixel at X=100, Y=150 
-    *   2. convert coordinates
-    move.w  #10,d1         ; X Start coordinate
-    lsl.w   #8,d1           ; Y Start coordinate
-    addi.w  #10,d1
-        
-    *   2. convert back coordinates
-    move.b  d1,d2
-    andi.w  #$00FF,d1
+    rts
+
+_SHAPE:
+    move.w  #-1,d6
+    move.w  d1,d5
 loop2:    
 loop1:  
     addq.w  #1,d1
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
-    cmpi    #120,d1
+    cmp     d3,d1          ; Width
     blo     loop1
     addq.w  #1,d2
-    move.w  #10,d1
-    cmpi    #100,d2
-    blo     loop2    
     
+    move.w  d5,d1
 
+   
+    cmp     d4,d2          ; Height
+    blo     loop2    
+    rts
 
+_MAIN:
+    move.l  #$0000FF00,d1
+    jsr     _SET_COLOR      ; set color in d1.l
+    move.w  #200,d1
+    move.w  #300,d2
+    move.w  #250,d3
+    move.w  #350,d4
+    jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
+
+    move.l  #$00FF0000,d1
+    jsr     _SET_COLOR      ; set color in d1.l
+    move.w  #300,d1
+    move.w  #400,d2
+    move.w  #350,d3
+    move.w  #450,d4
+    jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
+    
+    move.l  #$000000FF,d1
+    jsr     _SET_COLOR      ; set color in d1.l
+    move.w  #100,d1
+    move.w  #200,d2
+    move.w  #150,d3
+    move.w  #250,d4
+    jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
 
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
 
     END    START        ; last line of source
+
 
 *~Font name~Courier New~
 *~Font size~10~
