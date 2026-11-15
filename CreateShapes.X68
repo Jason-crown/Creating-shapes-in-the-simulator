@@ -17,25 +17,29 @@ START:                  ; first instruction of program
     *   2. convert coordinates
     move.w  #100,d1         ; X Start coordinate
     lsl.w   #8,d1           ; Y Start coordinate
-    addi.w  #150,d1
+    addi.w  #100,d1
     
-    move.w  #150,d3         ; X End coordinate
+    move.w  #11,d3         ; X End coordinate
     lsl.w   #8,d3           ; Y End coordinate
-    addi.w  #200,d3    
+    addi.w  #11,d3    
     *   2. convert back coordinates
     move.b  d3,d4
     andi.w  #$00FF,d3
      
     move.b  d1,d2
     andi.w  #$00FF,d1
-
+loopH:
 loopV:
-    addq.w  #1,d1
-    addq.w  #1,d3
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
-    cmp     d3,d1
+    addq.w  #1,d1
+    addq.w  #1,d3
+    cmp     d3,d1    
     blo     loopV
+    addq.w  #1,d2
+    addq.w  #1,d4
+    cmp     d4,d2
+    blo     loopH
 
 
     SIMHALT             ; halt simulator
