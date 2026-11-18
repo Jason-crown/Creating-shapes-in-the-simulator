@@ -18,6 +18,11 @@ _SET_COLOR:                 ; $00BBGGRR
     rts
 
 _SHAPE:
+    link    a6,#0
+    move.w  14(a6),d1
+    move.w  12(a6),d2
+    move.w  10(a6),d3
+    move.w  8(a6),d4
     move.w  #-1,d6
     move.w  d1,d5
 loop2:    
@@ -34,31 +39,32 @@ loop1:
    
     cmp     d4,d2          ; Height
     blo     loop2    
+    unlk    a6
     rts
 
 _MAIN:
     move.l  #$0000FF00,d1
     jsr     _SET_COLOR      ; set color in d1.l
-    move.w  #200,d1
-    move.w  #300,d2
-    move.w  #250,d3
-    move.w  #350,d4
+    move.w  #200,-(a7)
+    move.w  #300,-(a7)
+    move.w  #250,-(a7)
+    move.w  #350,-(a7)
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
 
     move.l  #$00FF0000,d1
     jsr     _SET_COLOR      ; set color in d1.l
-    move.w  #300,d1
-    move.w  #400,d2
-    move.w  #350,d3
-    move.w  #450,d4
+    move.w  #300,-(a7)
+    move.w  #400,-(a7)
+    move.w  #350,-(a7)
+    move.w  #450,-(a7)
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
     
     move.l  #$000000FF,d1
     jsr     _SET_COLOR      ; set color in d1.l
-    move.w  #100,d1
-    move.w  #200,d2
-    move.w  #150,d3
-    move.w  #250,d4
+    move.w  #100,-(a7)
+    move.w  #200,-(a7)
+    move.w  #150,-(a7)
+    move.w  #250,-(a7)
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
 
     SIMHALT             ; halt simulator
@@ -66,6 +72,7 @@ _MAIN:
 * Put variables and constants here
 
     END    START        ; last line of source
+
 
 
 *~Font name~Courier New~
