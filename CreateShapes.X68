@@ -6,7 +6,11 @@
 *-----------------------------------------------------------
     ORG    $1000
 START:                  ; first instruction of program
-
+XO      equ     14
+YO      equ     12
+XS      equ     10
+YS      equ     8
+SXO     equ     -2
 * Put program code here
     ; set defaults
     move.l  #$00FF00FF,d1   ; default purple
@@ -18,13 +22,12 @@ _SET_COLOR:                 ; $00BBGGRR
     rts
 
 _SHAPE:
-    link    a6,#0
-    move.w  14(a6),d1
-    move.w  12(a6),d2
-    move.w  10(a6),d3
-    move.w  8(a6),d4
-    move.w  #-1,d6
-    move.w  d1,d5
+    link    a6,#-2
+    move.w  XO(a6),d1
+    move.w  YO(a6),d2
+    move.w  XS(a6),d3
+    move.w  YS(a6),d4
+    move.w  d1,SXO(a6)
 loop2:    
 loop1:  
     addq.w  #1,d1
@@ -34,7 +37,7 @@ loop1:
     blo     loop1
     addq.w  #1,d2
     
-    move.w  d5,d1
+    move.w  SXO(a6),d1
 
    
     cmp     d4,d2          ; Height
@@ -72,6 +75,7 @@ _MAIN:
 * Put variables and constants here
 
     END    START        ; last line of source
+
 
 
 
