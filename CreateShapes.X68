@@ -23,6 +23,7 @@ _SET_COLOR:                 ; $00BBGGRR
 
 _SHAPE:
     link    a6,#-2
+    movem.l  d0-d6,-(a7)
     move.w  XO(a6),d1
     move.w  YO(a6),d2
     move.w  XS(a6),d3
@@ -42,6 +43,7 @@ loop1:
    
     cmp     d4,d2          ; Height
     blo     loop2    
+    movem.l (a7)+,d0-d6
     unlk    a6
     rts
 
@@ -75,6 +77,7 @@ _MAIN:
 * Put variables and constants here
 
     END    START        ; last line of source
+
 
 
 
