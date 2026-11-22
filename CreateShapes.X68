@@ -53,7 +53,6 @@ triangle:
     link    a6,#-2
     movem.l  d0-d6,-(a7)
     
-    
     move.w  XO(a6),d1
     move.w  YO(a6),d2
     move.w  XS(a6),d3
@@ -61,19 +60,19 @@ triangle:
     move.w  sft(a6),d5
     move.w  typ(a6),d7
     
-    move.w  d1,SXO(a6)
-loop2t:    
-loop1t:  
+    move.w  d1,SXO(a6)    
+TriLoop:  
     addq.w  #1,d1
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
     cmp     d3,d1           ; Width
-    blo     loop1t
+    blo     TriLoop
     sub.w   d5,d3           ;control factor
     addq.w  #1,d2
     move.w  SXO(a6),d1
+    add.w   d7,SXO(a6)
     cmp     d4,d2           ; Height
-    blo     loop2t    
+    blo     TriLoop    
     movem.l (a7)+,d0-d6
     unlk    a6
     rts
@@ -95,7 +94,7 @@ _MAIN:
     move.w  #350,-(a7)
     move.w  #450,-(a7)
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
-    addi    #8,(a7)git 
+    addi    #8,(a7)
     
     move.l  #$000000FF,d1
     jsr     _SET_COLOR      ; set color in d1.l
@@ -108,11 +107,11 @@ _MAIN:
     
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      ; set color in d1.l
+    move.w  #0,-(a7)
     move.w  #1,-(a7)
-    move.w  #-1,-(a7)
     move.w  #100,-(a7)
     move.w  #400,-(a7)
-    move.w  #100,-(a7)
+    move.w  #150,-(a7)
     move.w  #450,-(a7)
     
     jsr     triangle        ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
