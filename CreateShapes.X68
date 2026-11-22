@@ -84,16 +84,7 @@ loop1t:
     trap    #15             ; Execute simulator task
     cmp     d3,d1           ; Width
     blo     loop1t
-    cmpi.b  #1,d7
-    bhi     tlt
-    blo     blt
-tlt:
-    addq.w  d5,d3
-    jsr     skp
-blt:
-    subq.w  d5,d3
-skp:
-    subq.w  d5,d3           ;control factor
+    subq.w  #1,d3           ;control factor
     addq.w  #1,d2
     move.w  SXO(a6),d1
     cmp     d4,d2           ; Height
@@ -107,8 +98,8 @@ _MAIN:
     jsr     _SET_COLOR      ; set color in d1.l
     move.w  #200,-(a7) ;x start
     move.w  #300,-(a7) ;y start
-    move.w  #350,-(a7) ;x size
-    move.w  #450,-(a7) ;y size
+    move.w  #250,-(a7) ;x size
+    move.w  #350,-(a7) ;y size
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
     addi    #8,(a7)
         
@@ -143,9 +134,9 @@ _MAIN:
     move.b  #1,-(a7)
     move.b  #1,-(a7)    
     move.w  #100,-(a7)
-    move.w  #100,-(a7)
-    move.w  #200,-(a7)
-    move.w  #200,-(a7)
+    move.w  #400,-(a7)
+    move.w  #150,-(a7)
+    move.w  #450,-(a7)
     jsr     triangle        ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
     addi    #12,(a7)
         
