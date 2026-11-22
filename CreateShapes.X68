@@ -83,7 +83,7 @@ TriEnd:
     rts
     
 diamond:
-    link    a6,#0
+    link    a6,#-2
     movem.l  d0-d6,-(a7)
     
     move.w  XO(a6),d1       ; parameters
@@ -93,28 +93,32 @@ diamond:
     move.w  sft(a6),d5
     move.w  typ(a6),d7
     
-    move.l  #$0000FFFF,d1
-    jsr     _SET_COLOR      
-    move.w  #2,-(a7)        
-    move.w  #-4,-(a7)       
-    move.w  #100,-(a7)      
-    move.w  #300,-(a7)      
-    move.w  #150,-(a7)      
-    move.w  #350,-(a7)      
+    
+    move.w  d4,d6
+    sub.w   d2,d6
+    divu.w  #2,d6
+    andi.l  #$0000FFFF,d6
+TriHalf:    
+    move.w  d7,-(a7)        
+    move.w  d5,-(a7)       
+    move.w  d1,-(a7)      
+    move.w  d2,-(a7)      
+    move.w  d3,-(a7)      
+    move.w  d6,-(a7)      
     jsr     triangle        
     addi    #12,(a7)
     
-    move.l  #$0000FFFF,d1
-    jsr     _SET_COLOR      
-    move.w  #2,-(a7)        
-    move.w  #-4,-(a7)       
-    move.w  #100,-(a7)      
-    move.w  #300,-(a7)      
-    move.w  #150,-(a7)      
-    move.w  #350,-(a7)      
-    jsr     triangle        
-    addi    #12,(a7)
+    move.w  d4,d6
+    sub.w   d2,d6
     
+    add     d6,d2
+    
+    divu.w  #2,d6
+    andi.l  #$0000FFFF,d6
+    
+    add     d6,s
+    
+    jsr     TriHalf
     movem.l (a7)+,d0-d6
     unlk    a6
     rts
