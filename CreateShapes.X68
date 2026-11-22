@@ -46,7 +46,22 @@ loop1:
     movem.l (a7)+,d0-d6
     unlk    a6
     rts
-
+    
+line:
+    link    a6,#-2
+    movem.l  d0-d6,-(a7)
+    move.w  XS(a6),d1
+    move.w  YS(a6),d2
+    move.w  d1,SXO(a6)   
+loop:  
+    addq.w  #1,d1
+    move.b  #82,d0          ; Task 82: Draw pixel in pen color
+    trap    #15             ; Execute simulator task
+    cmp     d2,d1          ; Width
+    blo     loop1
+    movem.l (a7)+,d0-d6
+    unlk    a6
+    rts    
 _MAIN:
     move.l  #$0000FF00,d1
     jsr     _SET_COLOR      ; set color in d1.l
@@ -77,6 +92,7 @@ _MAIN:
 * Put variables and constants here
 
     END    START        ; last line of source
+
 
 
 
