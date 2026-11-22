@@ -6,6 +6,8 @@
 *-----------------------------------------------------------
     ORG    $1000
 START:                  ; first instruction of program
+typ     equ     18
+sft     equ     16
 XO      equ     14
 YO      equ     12
 XS      equ     10
@@ -34,14 +36,14 @@ loop1:
     addq.w  #1,d1
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
-    cmp     d3,d1          ; Width
+    cmp     d3,d1           ; Width
     blo     loop1
     addq.w  #1,d2
     
     move.w  SXO(a6),d1
 
    
-    cmp     d4,d2          ; Height
+    cmp     d4,d2           ; Height
     blo     loop2    
     movem.l (a7)+,d0-d6
     unlk    a6
@@ -58,7 +60,7 @@ loop:
     addq.w  #1,d1
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
-    cmp     d3,d1          ; Width
+    cmp     d3,d1           ; Width
     blo     loop
     movem.l (a7)+,d0-d6
     unlk    a6
@@ -67,23 +69,34 @@ loop:
 triangle:
     link    a6,#-2
     movem.l  d0-d6,-(a7)
+    move.w  typ(a6),d7
+    move.w  sft(a6),d5
     move.w  XO(a6),d1
     move.w  YO(a6),d2
     move.w  XS(a6),d3
     move.w  YS(a6),d4
+    
     move.w  d1,SXO(a6)
 loop2t:    
 loop1t:  
-    
     addq.w  #1,d1
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
-    cmp     d3,d1          ; Width
+    cmp     d3,d1           ; Width
     blo     loop1t
-    subq.w  #1,d3           ;control factor
+    cmpi.b  #1,d7
+    bhi     tlt
+    blo     blt
+tlt:
+    addq.w  d5,d3
+    jsr     skp
+blt:
+    subq.w  d5,d3
+skp:
+    subq.w  d5,d3           ;control factor
     addq.w  #1,d2
     move.w  SXO(a6),d1
-    cmp     d4,d2          ; Height
+    cmp     d4,d2           ; Height
     blo     loop2t    
     movem.l (a7)+,d0-d6
     unlk    a6
@@ -92,10 +105,10 @@ loop1t:
 _MAIN:
     move.l  #$0000FF00,d1
     jsr     _SET_COLOR      ; set color in d1.l
-    move.w  #200,-(a7)
-    move.w  #300,-(a7)
-    move.w  #250,-(a7)
-    move.w  #350,-(a7)
+    move.w  #200,-(a7) ;x start
+    move.w  #300,-(a7) ;y start
+    move.w  #350,-(a7) ;x size
+    move.w  #450,-(a7) ;y size
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
     addi    #8,(a7)
         
@@ -122,17 +135,19 @@ _MAIN:
     move.w  #50,-(a7)
     move.w  #100,-(a7)
     move.w  #100,-(a7)
-    jsr     line          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
+    jsr     line            ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
     addi    #6,(a7)
     
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      ; set color in d1.l
+    move.b  #1,-(a7)
+    move.b  #1,-(a7)    
     move.w  #100,-(a7)
     move.w  #100,-(a7)
     move.w  #200,-(a7)
     move.w  #200,-(a7)
-    jsr     triangle          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
-    addi    #8,(a7)
+    jsr     triangle        ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
+    addi    #12,(a7)
         
     SIMHALT             ; halt simulator
 
