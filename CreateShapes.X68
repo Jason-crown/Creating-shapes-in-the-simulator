@@ -55,6 +55,13 @@ triangle:
     move.w  sft(a6),d5
     move.w  typ(a6),d7
     move.w  d1,SXO(a6)      ; save d1
+    
+    tst.w   d5              ; detect flips
+    ble     TriLoop
+    tst.w   d7
+    ble     TriLoop  
+    move.w  d1,d3
+   
 TriLoop:  
     cmp     d1,d3
     blo     Triend
@@ -69,11 +76,49 @@ TriLoop:
     move.w  SXO(a6),d1      ; use saved d1
     sub.w   d7,SXO(a6)      ; Left Slop
     cmp     d4,d2           ; Height
-    blo     TriLoop    
+    blo     TriLoop        
 TriEnd:
     movem.l (a7)+,d0-d6
     unlk    a6
     rts
+    
+diamond:
+    link    a6,#0
+    movem.l  d0-d6,-(a7)
+    
+    move.w  XO(a6),d1       ; parameters
+    move.w  YO(a6),d2
+    move.w  XS(a6),d3
+    move.w  YS(a6),d4
+    move.w  sft(a6),d5
+    move.w  typ(a6),d7
+    
+    move.l  #$0000FFFF,d1
+    jsr     _SET_COLOR      
+    move.w  #2,-(a7)        
+    move.w  #-4,-(a7)       
+    move.w  #100,-(a7)      
+    move.w  #300,-(a7)      
+    move.w  #150,-(a7)      
+    move.w  #350,-(a7)      
+    jsr     triangle        
+    addi    #12,(a7)
+    
+    move.l  #$0000FFFF,d1
+    jsr     _SET_COLOR      
+    move.w  #2,-(a7)        
+    move.w  #-4,-(a7)       
+    move.w  #100,-(a7)      
+    move.w  #300,-(a7)      
+    move.w  #150,-(a7)      
+    move.w  #350,-(a7)      
+    jsr     triangle        
+    addi    #12,(a7)
+    
+    movem.l (a7)+,d0-d6
+    unlk    a6
+    rts
+    
     
 _MAIN:
     move.l  #$0000FF00,d1
@@ -105,11 +150,11 @@ _MAIN:
     
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      
-    move.w  #2,-(a7)        ; left side slope
-    move.w  #2,-(a7)        ; right side slope 
+    move.w  #1,-(a7)       ; left side slope
+    move.w  #1,-(a7)       ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
-    move.w  #100,-(a7)      ; Width
+    move.w  #200,-(a7)      ; Width
     move.w  #450,-(a7)      ; Hight
     jsr     triangle        
     addi    #12,(a7)
@@ -127,8 +172,8 @@ _MAIN:
     
     move.l  #$00FFFF00,d1
     jsr     _SET_COLOR      
-    move.w  #4,-(a7)        
-    move.w  #4,-(a7)       
+    move.w  #1,-(a7)        
+    move.w  #1,-(a7)       
     move.w  #100,-(a7)      
     move.w  #100,-(a7)      
     move.w  #110,-(a7)      
