@@ -70,7 +70,8 @@ _MAIN:
     move.w  #250,-(a7)
     move.w  #350,-(a7)
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
-
+    addi    #8,(a7)
+        
     move.l  #$00FF0000,d1
     jsr     _SET_COLOR      ; set color in d1.l
     move.w  #300,-(a7)
@@ -78,6 +79,7 @@ _MAIN:
     move.w  #350,-(a7)
     move.w  #450,-(a7)
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
+    addi    #8,(a7)
     
     move.l  #$000000FF,d1
     jsr     _SET_COLOR      ; set color in d1.l
@@ -86,7 +88,8 @@ _MAIN:
     move.w  #150,-(a7)
     move.w  #250,-(a7)
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
-
+    addi    #8,(a7)
+        
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
