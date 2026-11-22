@@ -32,9 +32,9 @@ square:
     move.w  YS(a6),d4
     move.w  d1,SXO(a6)      ; save d1
 SqrLoop:
-    addq.w  #1,d1           ; next column
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
+    addq.w  #1,d1           ; next column
     cmp     d3,d1           ; Width
     blo     SqrLoop
     addq.w  #1,d2           ; next row
@@ -58,9 +58,10 @@ triangle:
 TriLoop:  
     cmp     d1,d3
     blo     Triend
-    addq.w  #1,d1           ; next column
+    
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
+    addq.w  #1,d1           ; next column
     cmp     d3,d1           ; Width
     blo     TriLoop
     add.w   d5,d3           ; Right Slop
@@ -117,13 +118,23 @@ _MAIN:
     jsr     _SET_COLOR      
     move.w  #2,-(a7)        
     move.w  #-4,-(a7)       
+    move.w  #100,-(a7)      
     move.w  #300,-(a7)      
-    move.w  #300,-(a7)      
-    move.w  #350,-(a7)      
+    move.w  #150,-(a7)      
     move.w  #350,-(a7)      
     jsr     triangle        
     addi    #12,(a7)
     
+    move.l  #$00FFFF00,d1
+    jsr     _SET_COLOR      
+    move.w  #4,-(a7)        
+    move.w  #4,-(a7)       
+    move.w  #100,-(a7)      
+    move.w  #100,-(a7)      
+    move.w  #110,-(a7)      
+    move.w  #110,-(a7)      
+    jsr     triangle        
+    addi    #12,(a7)
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
