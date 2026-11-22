@@ -82,24 +82,6 @@ TriEnd:
     unlk    a6
     rts
     
-diamond:
-    move.w  XO(a6),d1       ; parameters
-    move.w  YO(a6),d2
-    move.w  XS(a6),d3
-    move.w  YS(a6),d4
-    move.w  sft(a6),d5
-    move.w  typ(a6),d7
-    move.w  d1,SXO(a6)      ; save d1
-    move.w  #1,-(a7)        
-    move.w  #1,-(a7)       
-    move.w  #100,-(a7)      
-    move.w  #100,-(a7)      
-    move.w  #150,-(a7)      
-    move.w  #110,-(a7)
-    jsr     triangle
-    addi.w  #12,(a7)       
-    rts
-    
 _MAIN:
     move.l  #$0000FF00,d1
     jsr     _SET_COLOR      ; set color in d1.l
@@ -149,28 +131,7 @@ _MAIN:
     move.w  #350,-(a7)      
     jsr     triangle        
     addi    #12,(a7)
-    
-    move.l  #$00FFFF00,d1
-    jsr     _SET_COLOR      
-    move.w  #1,-(a7)        
-    move.w  #1,-(a7)       
-    move.w  #100,-(a7)      
-    move.w  #100,-(a7)      
-    move.w  #110,-(a7)      
-    move.w  #110,-(a7)      
-    jsr     triangle        
-    addi    #12,(a7)
-    
-    move.l  #$00A00C70,d1
-    jsr     _SET_COLOR      
-    move.w  #1,-(a7)        
-    move.w  #1,-(a7)       
-    move.w  #100,-(a7)      
-    move.w  #100,-(a7)      
-    move.w  #150,-(a7)      
-    move.w  #110,-(a7)      
-    jsr     diamond
-    addi    #12,(a7)
+        
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
