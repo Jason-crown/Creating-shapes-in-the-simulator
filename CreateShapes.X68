@@ -50,18 +50,45 @@ loop1:
 line:
     link    a6,#-2
     movem.l  d0-d6,-(a7)
-    move.w  10(a6),d1
-    move.w  8(a6),d2
+    move.w  12(a6),d1
+    move.w  10(a6),d2
+    move.w  8(a6),d3
     move.w  d1,SXO(a6)   
 loop:  
     addq.w  #1,d1
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
-    cmp     d2,d1          ; Width
+    cmp     d3,d1          ; Width
     blo     loop
     movem.l (a7)+,d0-d6
     unlk    a6
-    rts    
+    rts
+
+triangle:
+    link    a6,#-2
+    movem.l  d0-d6,-(a7)
+    move.w  XO(a6),d1
+    move.w  YO(a6),d2
+    move.w  XS(a6),d3
+    move.w  YS(a6),d4
+    move.w  d1,SXO(a6)
+loop2t:    
+loop1t:  
+    
+    addq.w  #1,d1
+    move.b  #82,d0          ; Task 82: Draw pixel in pen color
+    trap    #15             ; Execute simulator task
+    cmp     d3,d1          ; Width
+    blo     loop1t
+    subq.w  #1,d3           ;control factor
+    addq.w  #1,d2
+    move.w  SXO(a6),d1
+    cmp     d4,d2          ; Height
+    blo     loop2t    
+    movem.l (a7)+,d0-d6
+    unlk    a6
+    rts
+      
 _MAIN:
     move.l  #$0000FF00,d1
     jsr     _SET_COLOR      ; set color in d1.l
@@ -94,8 +121,18 @@ _MAIN:
     jsr     _SET_COLOR      ; set color in d1.l
     move.w  #50,-(a7)
     move.w  #100,-(a7)
+    move.w  #100,-(a7)
     jsr     line          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
-    addi    #4,(a7)
+    addi    #6,(a7)
+    
+    move.l  #$00FF00FF,d1
+    jsr     _SET_COLOR      ; set color in d1.l
+    move.w  #100,-(a7)
+    move.w  #100,-(a7)
+    move.w  #200,-(a7)
+    move.w  #200,-(a7)
+    jsr     triangle          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
+    addi    #8,(a7)
         
     SIMHALT             ; halt simulator
 
