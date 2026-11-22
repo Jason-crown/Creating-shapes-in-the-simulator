@@ -6,6 +6,7 @@
 *-----------------------------------------------------------
     ORG    $1000
 START:                  ; first instruction of program
+
 typ     equ     18
 sft     equ     16
 XO      equ     14
@@ -13,9 +14,8 @@ YO      equ     12
 XS      equ     10
 YS      equ     8
 SXO     equ     -2
+
 * Put program code here
-    ; set defaults
-    move.l  #$00FF00FF,d1   ; default purple
     jsr     _MAIN
     
 _SET_COLOR:                 ; $00BBGGRR
@@ -31,18 +31,16 @@ square:
     move.w  XS(a6),d3
     move.w  YS(a6),d4
     move.w  d1,SXO(a6)
-sqrLoop:
+SqrLoop:
     addq.w  #1,d1
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
     cmp     d3,d1           ; Width
-    blo     sqrLoop
+    blo     SqrLoop
     addq.w  #1,d2
-    
     move.w  SXO(a6),d1
-
     cmp     d4,d2           ; Height
-    blo     sqrLoop
+    blo     SqrLoop
     movem.l (a7)+,d0-d6
     unlk    a6
     rts
@@ -88,6 +86,27 @@ circle:
     
     move.w  d1,SXO(a6)    
 CirLoop:  
+    addq.w  #1,d1
+    move.b  #82,d0          ; Task 82: Draw pixel in pen color
+    trap    #15             ; Execute simulator task
+
+    movem.l (a7)+,d0-d6
+    unlk    a6
+    rts
+    
+polygone:
+    link    a6,#-2
+    movem.l  d0-d6,-(a7)
+    
+    move.w  XO(a6),d1
+    move.w  YO(a6),d2
+    move.w  XS(a6),d3
+    move.w  YS(a6),d4
+    move.w  sft(a6),d5
+    move.w  typ(a6),d7
+    
+    move.w  d1,SXO(a6)    
+polLoop:  
     addq.w  #1,d1
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
