@@ -31,8 +31,8 @@ _SHAPE:
     move.w  XS(a6),d3
     move.w  YS(a6),d4
     move.w  d1,SXO(a6)
-loop2:    
-loop1:  
+loop2:
+loop1:
     addq.w  #1,d1
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
@@ -48,33 +48,18 @@ loop1:
     movem.l (a7)+,d0-d6
     unlk    a6
     rts
-    
-line:
-    link    a6,#-2
-    movem.l  d0-d6,-(a7)
-    move.w  12(a6),d1
-    move.w  10(a6),d2
-    move.w  8(a6),d3
-    move.w  d1,SXO(a6)   
-loop:  
-    addq.w  #1,d1
-    move.b  #82,d0          ; Task 82: Draw pixel in pen color
-    trap    #15             ; Execute simulator task
-    cmp     d3,d1           ; Width
-    blo     loop
-    movem.l (a7)+,d0-d6
-    unlk    a6
-    rts
 
 triangle:
     link    a6,#-2
     movem.l  d0-d6,-(a7)
-    move.w  typ(a6),d7
-    move.w  sft(a6),d5
+    
+    
     move.w  XO(a6),d1
     move.w  YO(a6),d2
     move.w  XS(a6),d3
     move.w  YS(a6),d4
+    move.w  sft(a6),d5
+    move.w  typ(a6),d7
     
     move.w  d1,SXO(a6)
 loop2t:    
@@ -84,7 +69,7 @@ loop1t:
     trap    #15             ; Execute simulator task
     cmp     d3,d1           ; Width
     blo     loop1t
-    subq.w  #1,d3           ;control factor
+    sub.w   d5,d3           ;control factor
     addq.w  #1,d2
     move.w  SXO(a6),d1
     cmp     d4,d2           ; Height
@@ -110,7 +95,7 @@ _MAIN:
     move.w  #350,-(a7)
     move.w  #450,-(a7)
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
-    addi    #8,(a7)
+    addi    #8,(a7)git 
     
     move.l  #$000000FF,d1
     jsr     _SET_COLOR      ; set color in d1.l
@@ -121,22 +106,15 @@ _MAIN:
     jsr     _SHAPE          ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
     addi    #8,(a7)
     
-    move.l  #$0000FFFF,d1
-    jsr     _SET_COLOR      ; set color in d1.l
-    move.w  #50,-(a7)
-    move.w  #100,-(a7)
-    move.w  #100,-(a7)
-    jsr     line            ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
-    addi    #6,(a7)
-    
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      ; set color in d1.l
-    move.b  #1,-(a7)
-    move.b  #1,-(a7)    
+    move.w  #1,-(a7)
+    move.w  #-1,-(a7)
     move.w  #100,-(a7)
     move.w  #400,-(a7)
-    move.w  #150,-(a7)
+    move.w  #100,-(a7)
     move.w  #450,-(a7)
+    
     jsr     triangle        ; d1.w = x offset d2.w = y offset, d3.w = Width, d4.w = Height
     addi    #12,(a7)
         
