@@ -56,16 +56,23 @@ triangle:
     move.w  typ(a6),d7
     move.w  d1,SXO(a6)      ; save d1
     
+    clr.l   d6
+    add.w   d3,d6
+    add.w   d1,d6
+    divu.w  #2,d6
+    andi    #$0000FFFF,d6
+    
     tst.w   d5              ; detect flips
     ble     TriLoop
     tst.w   d7
     ble     TriLoop  
-    move.w  d1,d3
+    move.w  d6,d3
    
 TriLoop:  
     cmp     d1,d3
     blo     Triend
-    
+    cmp     d2,d4
+    blo     Triend    
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
     addq.w  #1,d1           ; next column
@@ -112,8 +119,8 @@ _MAIN:
     
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      
-    move.w  #1,-(a7)       ; left side slope
-    move.w  #1,-(a7)       ; right side slope 
+    move.w  #1,-(a7)        ; left side slope
+    move.w  #1,-(a7)        ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
@@ -129,6 +136,29 @@ _MAIN:
     move.w  #300,-(a7)      
     move.w  #150,-(a7)      
     move.w  #350,-(a7)      
+    jsr     triangle        
+    addi    #12,(a7)
+    
+    * testing diamond
+    move.l  #$00FFFFFF,d1
+    jsr     _SET_COLOR      
+    move.w  #1,-(a7)        
+    move.w  #1,-(a7)       
+    move.w  #350,-(a7)      
+    move.w  #50,-(a7)      
+    move.w  #350,-(a7)      
+    move.w  #100,-(a7)      
+    jsr     triangle        
+    addi    #12,(a7)
+    
+    move.l  #$00FFFFFF,d1
+    jsr     _SET_COLOR      
+    move.w  #-1,-(a7)        
+    move.w  #-1,-(a7)       
+    move.w  #350,-(a7)      
+    move.w  #100,-(a7)      
+    move.w  #400,-(a7)      
+    move.w  #150,-(a7)      
     jsr     triangle        
     addi    #12,(a7)
         
