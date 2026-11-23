@@ -56,18 +56,16 @@ triangle:
     move.w  typ(a6),d7
     move.w  d1,SXO(a6)      ; save d1
 
-    move.w  d1,-4(a6)
-    sub.w   d3,-4(a6)
+    clr.l   d6
+    add.w   d1,d6
+    add.w   d3,d6
+    divu.w  #2,d6
+    andi.w  #$0000FFFF,d6
 TriLoop:  
     cmp     d1,d3
     blo     Triend
     cmp     d2,d4
     blo     Triend
-    move.w  SXO(a6),d6
-    sub.w   d4,d6
-    neg.w   d6
-    cmp     -4(a6),d6
-    bgt     TriEnd
     
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
