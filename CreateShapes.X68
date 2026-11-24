@@ -46,7 +46,7 @@ SqrLoop:
     rts
 
 triangle:
-    link    a6,#-4
+    link    a6,#-2
     movem.l  d0-d7,-(a7)
     move.w  XO(a6),d1       ; parameters
     move.w  YO(a6),d2
@@ -56,11 +56,11 @@ triangle:
     move.w  typ(a6),d7
     move.w  d1,SXO(a6)      ; save d1
 
-    clr.l   d6
-    add.w   d1,d6
-    add.w   d3,d6
-    divu.w  #2,d6
-    andi.w  #$0000FFFF,d6
+    tst.w   d5              ; detect flips
+    ble     TriLoop
+    tst.w   d7
+    ble     TriLoop  
+    move.w  d1,d3
 TriLoop:  
     cmp     d1,d3
     blo     Triend
@@ -149,7 +149,7 @@ _MAIN:
     
     move.l  #$00FFFFFF,d1
     jsr     _SET_COLOR      
-    move.w  #1,-(a7)        
+    move.w  #-1,-(a7)        
     move.w  #1,-(a7)       
     move.w  #350,-(a7)      
     move.w  #100,-(a7)      
@@ -157,15 +157,26 @@ _MAIN:
     move.w  #150,-(a7)      
     jsr     triangle        
     addi    #12,(a7)
-        
-    * testing diamond
+    
     move.l  #$00FFFFFF,d1
     jsr     _SET_COLOR      
-       
+    move.w  #1,-(a7)        
+    move.w  #-1,-(a7)       
     move.w  #350,-(a7)      
-    move.w  #50,-(a7)      
-    move.w  #400,-(a7)      
     move.w  #100,-(a7)      
+    move.w  #400,-(a7)      
+    move.w  #150,-(a7)      
+    jsr     triangle        
+    addi    #12,(a7)
+    
+    move.l  #$00000000,d1
+    jsr     _SET_COLOR      
+    move.w  #-1,-(a7)        
+    move.w  #-1,-(a7)       
+    move.w  #350,-(a7)      
+    move.w  #100,-(a7)      
+    move.w  #400,-(a7)      
+    move.w  #150,-(a7)      
     jsr     triangle        
     addi    #12,(a7)
     SIMHALT             ; halt simulator
