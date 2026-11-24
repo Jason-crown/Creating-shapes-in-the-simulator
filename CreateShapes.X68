@@ -46,7 +46,7 @@ SqrLoop:
     rts
 
 triangle:
-    link    a6,#-2
+    link    a6,#-6
     movem.l  d0-d7,-(a7)
     move.w  XO(a6),d1       ; parameters
     move.w  YO(a6),d2
@@ -55,41 +55,41 @@ triangle:
     move.w  sft(a6),d5      ; right
     move.w  typ(a6),d7      ; left
     move.w  d1,SXO(a6)      ; save d1
-    move.w  SXO(a6),d6
+    move.w  d1,-4(a6)
+    move.w  d3,-6(a6)
     move.w  d1,d0           ; midpoint calculation
     add.w   d3,d0
     lsr.w   #1,d0
     tst.w   d5              ; check right slop
     ble     skp
-    move.w  d0,d3
+    move.w  d0,d3           ; set right to middle
 skp:    
     tst.w   d7              ; check left slop
     ble     TriLoop    
-    move.w  d0,d1
+    move.w  d0,d1           ; set left to middle
     move.w  d0,SXO(a6) 
 TriLoop:  
-    cmp     d2,d4           ; set hight bounds
+    cmp     d2,d4           ; Keep in hight bounds
     blo     Triend
-    cmp     d1,d3           ; set width bounds
+    cmp     d1,d3           ; Keep in width bounds
     blo     Triend     
-   
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
     addq.w  #1,d1           ; next column
-    
     cmp     d3,d1           ; Width
     blo     TriLoop
-    
     add.w   d5,d3           ; Right Slop
-    
-
     
     addq.w  #1,d2           ; next row
     move.w  SXO(a6),d1      ; use saved d1
     sub.w   d7,SXO(a6)      ; Left Slop
     
-    cmp     SXO(a6),d6
-    bGt     TriEnd
+    move.w  -4(a6),d6
+    cmp.w   SXO(a6),d6      
+    bgt     TriEnd
+    move.w  -6(a6),d6
+    cmp.w   d3,d6      
+    ble     TriEnd
     
     cmp     d4,d2           ; Height
     blo     TriLoop        
@@ -137,10 +137,19 @@ _MAIN:
     jsr     triangle        
     addi    #12,(a7)    
     
+    move.l  #$00110011,d1
+    jsr     _SET_COLOR       
+    move.w  #100,-(a7)      ; X coordinate
+    move.w  #400,-(a7)      ; Y coordinate
+    move.w  #200,-(a7)      ; Width
+    move.w  #450,-(a7)      ; Hight
+    jsr     square        
+    addi    #8,(a7)    
+    
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      
-    move.w  #2,-(a7)        ; left side slope
-    move.w  #2,-(a7)       ; right side slope 
+    move.w  #1,-(a7)        ; left side slope
+    move.w  #2,-(a7)        ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
@@ -151,14 +160,16 @@ _MAIN:
 
     move.l  #$00FFFFFF,d1
     jsr     _SET_COLOR      
-    move.w  #-2,-(a7)        ; left side slope
+    move.w  #-1,-(a7)        ; left side slope
     move.w  #-2,-(a7)       ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
     move.w  #450,-(a7)      ; Hight
-    jsr     triangle        
+    ;jsr     triangle        
     addi    #12,(a7)
+    
+
     
     SIMHALT             ; halt simulator
 
