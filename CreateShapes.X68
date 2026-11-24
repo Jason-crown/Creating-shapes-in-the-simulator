@@ -55,6 +55,7 @@ triangle:
     move.w  sft(a6),d5      ; right
     move.w  typ(a6),d7      ; left
     move.w  d1,SXO(a6)      ; save d1
+    move.w  SXO(a6),d6
     move.w  d1,d0           ; midpoint calculation
     add.w   d3,d0
     lsr.w   #1,d0
@@ -67,19 +68,29 @@ skp:
     move.w  d0,d1
     move.w  d0,SXO(a6) 
 TriLoop:  
-    cmp     d1,d3           ; set width bounds
-    blo     Triend
     cmp     d2,d4           ; set hight bounds
     blo     Triend
+    cmp     d1,d3           ; set width bounds
+    blo     Triend     
+   
     move.b  #82,d0          ; Task 82: Draw pixel in pen color
     trap    #15             ; Execute simulator task
     addq.w  #1,d1           ; next column
+    
     cmp     d3,d1           ; Width
     blo     TriLoop
+    
     add.w   d5,d3           ; Right Slop
+    
+
+    
     addq.w  #1,d2           ; next row
     move.w  SXO(a6),d1      ; use saved d1
     sub.w   d7,SXO(a6)      ; Left Slop
+    
+    cmp     SXO(a6),d6
+    bGt     TriEnd
+    
     cmp     d4,d2           ; Height
     blo     TriLoop        
 TriEnd:
@@ -128,8 +139,8 @@ _MAIN:
     
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      
-    move.w  #1,-(a7)        ; left side slope
-    move.w  #-1,-(a7)       ; right side slope 
+    move.w  #2,-(a7)        ; left side slope
+    move.w  #2,-(a7)       ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
@@ -140,15 +151,14 @@ _MAIN:
 
     move.l  #$00FFFFFF,d1
     jsr     _SET_COLOR      
-    move.w  #1,-(a7)        ; left side slope
-    move.w  #1,-(a7)       ; right side slope 
+    move.w  #-2,-(a7)        ; left side slope
+    move.w  #-2,-(a7)       ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
     move.w  #450,-(a7)      ; Hight
-    ;jsr     triangle        
+    jsr     triangle        
     addi    #12,(a7)
-
     
     SIMHALT             ; halt simulator
 
