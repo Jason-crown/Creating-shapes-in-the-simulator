@@ -59,8 +59,14 @@ triangle:
     tst.w   d5              ; detect flips
     ble     TriLoop
     tst.w   d7
-    ble     TriLoop  
-    move.w  d1,d3
+    ble     TriLoop 
+    move.w  d1,d0   
+    add.w   d3,d0
+    lsr.w   #1,d0
+    move.w  d0,d1
+    move.w  d0,d3
+    move.w  d0,SXO(a6)
+    
 TriLoop:  
     cmp     d1,d3
     blo     Triend
@@ -115,8 +121,8 @@ _MAIN:
     
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      
-    move.w  #1,-(a7)        ; left side slope
-    move.w  #1,-(a7)        ; right side slope 
+    move.w  #-1,-(a7)        ; left side slope
+    move.w  #-1,-(a7)        ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
@@ -135,50 +141,15 @@ _MAIN:
     jsr     triangle        
     addi    #12,(a7)
     
-    * testing diamond
-    move.l  #$00FFFFFF,d1
-    jsr     _SET_COLOR      
-    move.w  #1,-(a7)        
-    move.w  #1,-(a7)       
-    move.w  #350,-(a7)      
-    move.w  #50,-(a7)      
-    move.w  #400,-(a7)      
-    move.w  #100,-(a7)      
-    jsr     triangle        
-    addi    #12,(a7)
+
+    move.w  #100,-(a7)      ; X coordinate
+    move.w  #350,-(a7)      ; Y coordinate
+    move.w  #200,-(a7)      ; Width
+    move.w  #400,-(a7)      ; Hight
+    jsr     square        
+    addi    #8,(a7)
+
     
-    move.l  #$00FFFFFF,d1
-    jsr     _SET_COLOR      
-    move.w  #-1,-(a7)        
-    move.w  #1,-(a7)       
-    move.w  #350,-(a7)      
-    move.w  #100,-(a7)      
-    move.w  #400,-(a7)      
-    move.w  #150,-(a7)      
-    jsr     triangle        
-    addi    #12,(a7)
-    
-    move.l  #$00FFFFFF,d1
-    jsr     _SET_COLOR      
-    move.w  #1,-(a7)        
-    move.w  #-1,-(a7)       
-    move.w  #350,-(a7)      
-    move.w  #100,-(a7)      
-    move.w  #400,-(a7)      
-    move.w  #150,-(a7)      
-    jsr     triangle        
-    addi    #12,(a7)
-    
-    move.l  #$00000000,d1
-    jsr     _SET_COLOR      
-    move.w  #-1,-(a7)        
-    move.w  #-1,-(a7)       
-    move.w  #350,-(a7)      
-    move.w  #100,-(a7)      
-    move.w  #400,-(a7)      
-    move.w  #150,-(a7)      
-    jsr     triangle        
-    addi    #12,(a7)
     SIMHALT             ; halt simulator
 
 * Put variables and constants here
