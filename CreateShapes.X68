@@ -145,6 +145,18 @@ _MAIN:
     move.w  #450,-(a7)      ; Hight
     jsr     square        
     addi    #8,(a7)    
+
+
+    move.l  #$00FFFFFF,d1
+    jsr     _SET_COLOR      
+    move.w  #-1,-(a7)       ; left side slope
+    move.w  #-2,-(a7)       ; right side slope 
+    move.w  #100,-(a7)      ; X coordinate
+    move.w  #400,-(a7)      ; Y coordinate
+    move.w  #200,-(a7)      ; Width
+    move.w  #450,-(a7)      ; Hight
+    jsr     triangle        
+    addi    #12,(a7)
     
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      
@@ -156,19 +168,7 @@ _MAIN:
     move.w  #450,-(a7)      ; Hight
     jsr     triangle        
     addi    #12,(a7)
-    
-
-    move.l  #$00FFFFFF,d1
-    jsr     _SET_COLOR      
-    move.w  #-1,-(a7)        ; left side slope
-    move.w  #-2,-(a7)       ; right side slope 
-    move.w  #100,-(a7)      ; X coordinate
-    move.w  #400,-(a7)      ; Y coordinate
-    move.w  #200,-(a7)      ; Width
-    move.w  #450,-(a7)      ; Hight
-    ;jsr     triangle        
-    addi    #12,(a7)
-    
+        
 
     
     SIMHALT             ; halt simulator
