@@ -61,10 +61,37 @@ triangle:
     move.w  d1,d0           ; midpoint calculation
     add.w   d3,d0
     lsr.w   #1,d0
+    addi.w  #-17,d0
     
-    ;move.w  d3,d6           ; calculate width
+    move.w  d7,d6
+    mulu.w   d3,d6
+    
+    move.w  d5,d0
+    mulu.w   d1,d0
+    
+    add.w   d0,d6
+    
+    move.w  d5,d0
+    add.w   d7,d0
+    
+    divu.w  d0,d6
+    andi.l  #$0000FFFF,d6
+    move.l  d6,d0
+    
+    
+    ;move.w  d3,d6          ;1 calculate width
     ;sub.w   d1,d6
-                            ; calculate
+    
+    ;mulu.w  d5,d6
+    
+    ;move.w  d5,d0
+    ;add.w   d7,d0
+    
+    ;divu.w  d0,d6
+    ;andi.w  #$00FF,d6
+    ;move.l  d6,d0
+    
+                            ;2 calculate
     ;mulu.w  d5,d6
     ;move.w  d7,d0
     ;add.w   d5,d0
@@ -168,7 +195,7 @@ _MAIN:
     move.l  #$00FFFFFF,d1
     jsr     _SET_COLOR      
     move.w  #-1,-(a7)       ; left side slope
-    move.w  #-2,-(a7)       ; right side slope 
+    move.w  #-1,-(a7)       ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
@@ -179,7 +206,7 @@ _MAIN:
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      
     move.w  #1,-(a7)        ; left side slope
-    move.w  #2,-(a7)        ; right side slope 
+    move.w  #1,-(a7)        ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
@@ -194,6 +221,7 @@ QUIT:
 * Put variables and constants here
 
     END    START        ; last line of source
+
 
 
 
