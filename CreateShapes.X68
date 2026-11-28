@@ -48,62 +48,30 @@ SqrLoop:
 triangle:
     link    a6,#-6
     movem.l  d0-d7,-(a7)
+
     move.w  XO(a6),d1       ; parameters
     move.w  YO(a6),d2
     move.w  XS(a6),d3
     move.w  YS(a6),d4
     move.w  sft(a6),d5      ; right
     move.w  typ(a6),d7      ; left
+    
     move.w  d1,SXO(a6)      ; save d1
     move.w  d1,-4(a6)
     move.w  d3,-6(a6)
     
-    move.w  d1,d0           ; midpoint calculation
-    add.w   d3,d0
-    lsr.w   #1,d0
-    addi.w  #-17,d0
-    
     move.w  d7,d6
-    mulu.w   d3,d6
-    
-    move.w  d5,d0
-    mulu.w   d1,d0
-    
+    mulu.w  d3,d6
+    move.w  d1,d0
+    mulu.w  d5,d0
     add.w   d0,d6
-    
-    move.w  d5,d0
-    add.w   d7,d0
-    
+
+    move.w  d7,d0
+    add.w   d5,d0
     divu.w  d0,d6
     andi.l  #$0000FFFF,d6
-    move.l  d6,d0
-    
-    
-    ;move.w  d3,d6          ;1 calculate width
-    ;sub.w   d1,d6
-    
-    ;mulu.w  d5,d6
-    
-    ;move.w  d5,d0
-    ;add.w   d7,d0
-    
-    ;divu.w  d0,d6
-    ;andi.w  #$00FF,d6
-    ;move.l  d6,d0
-    
-                            ;2 calculate
-    ;mulu.w  d5,d6
-    ;move.w  d7,d0
-    ;add.w   d5,d0
-    ;divu.w  d0,d6
-    ;andi.w  #$0000FFFF,d6
-    ;add.w   d1,d6
-
-    ;move.b  d6,d1          * tests
-    ;move.w  #3,d0
-    ;trap    #15
-    ;jsr     QUIT
-                        
+    move.l  d6,d0 
+test:    
     tst.w   d5              ; check right slop
     ble     skp
     move.w  d0,d3           ; set right to middle ;-d7*size/(d7-d5)
@@ -111,9 +79,7 @@ skp:
     tst.w   d7              ; check left slop
     ble     TriLoop    
     move.w  d0,d1           ; set left to middle
-    move.w  d0,SXO(a6) 
-                                
-                                
+    move.w  d0,SXO(a6)                                   
 TriLoop:  
     cmp     d2,d4           ; Keep in hight bounds
     blo     Triend
@@ -194,8 +160,8 @@ _MAIN:
 
     move.l  #$00FFFFFF,d1
     jsr     _SET_COLOR      
-    move.w  #-1,-(a7)       ; left side slope
-    move.w  #-1,-(a7)       ; right side slope 
+    move.w  #2,-(a7)       ; left side slope
+    move.w  #5,-(a7)       ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
@@ -205,8 +171,8 @@ _MAIN:
     
     move.l  #$00FF00FF,d1
     jsr     _SET_COLOR      
-    move.w  #1,-(a7)        ; left side slope
-    move.w  #1,-(a7)        ; right side slope 
+    move.w  #-2,-(a7)        ; left side slope
+    move.w  #2,-(a7)        ; right side slope 
     move.w  #100,-(a7)      ; X coordinate
     move.w  #400,-(a7)      ; Y coordinate
     move.w  #200,-(a7)      ; Width
